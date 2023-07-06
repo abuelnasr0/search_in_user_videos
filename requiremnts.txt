@@ -1,0 +1,5 @@
+flask
+youtube-transcript-api
+faiss-cpu
+numpy
+sentence_transformers
