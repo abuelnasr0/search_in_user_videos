@@ -2,7 +2,7 @@ name: Docker
 
 on:
   push:
-    branchs: main
+    branchs: [main]
 
 env:
   IMAGE_NAME: departments-api
