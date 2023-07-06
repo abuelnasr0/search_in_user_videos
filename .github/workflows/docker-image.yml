@@ -15,5 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      working-directory: search_in_user_videos
       run: docker build . --file Dockerfile --tag search_in_user_videos:$(date +%s)
