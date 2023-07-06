@@ -18,9 +18,6 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
-      - name: Build the image and push it to ACR
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/searchimage:${{ github.sha }}
-          file: Dockerfile
+      - run: |
+            docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
+            docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
