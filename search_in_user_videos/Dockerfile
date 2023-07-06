@@ -5,7 +5,6 @@ COPY . /app
 WORKDIR /app
 
 RUN python3 -m venv /opt/venv
-RUN . /opt/venv/bin/activate
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
