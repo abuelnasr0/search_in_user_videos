@@ -6,8 +6,8 @@ WORKDIR /app
 
 RUN python3 -m venv /opt/venv
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN . /opt/venv/bin/activate && install --upgrade pip
+RUN . /opt/venv/bin/activate && pip install -r requirements.txt
 
 EXPOSE 5001
 
