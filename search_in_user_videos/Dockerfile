@@ -11,4 +11,4 @@ RUN pip install -r requirements.txt
 
 EXPOSE 5001
 
-ENTRYPOINT [ "python", "run.py" ]
+ENTRYPOINT ["/opt/venv/bin/python", "run.py" ]
