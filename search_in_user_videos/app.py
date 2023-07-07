@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, session
+from flask_cors import CORS
 
 from utils.url_parse import url_to_id
 from utils.youtube_transcript import get_captions
@@ -8,6 +9,7 @@ import uuid
 
 
 app = Flask(__name__)
+CORS(app)
 
 app.secret_key = 'BAD_SECRET_KEY'
 
@@ -42,45 +44,42 @@ def storevideo():
     vector_dbs[token] = vector_db
     print(vector_dbs)
     
-    return jsonify(token)
+    return jsonify({"video_id":video_id, "token":token})
 
 
 @app.route('/search', methods = ['POST'])
 def search():
     args = request.get_json()
     query = args['query']
+    token = args['token']
 
     #get query embedding 
     embedding = model.encode(query)
 
     #get the VDB
-    token = session.get("token", None)
     if token == None:
         return jsonify("no video sent to server")
 
-    print(token)
-    print(vector_dbs)
     vector_db = vector_dbs.get(token, None)
     if vector_db == None:
         return jsonify("vector database not found")
     
     #search in the VDB
-    result = vector_db.search(embedding, 5)
+    results = vector_db.search(embedding, 5)
+    result = results[0]
 
-    return jsonify(result)
+    return jsonify({"results":result})
 
 
 @app.route('/removeindex', methods = ['DELETE'])
 def removeindex():
-    #get the VDB
-    token = session.get("token", None)
+    args = request.get_json()
+    token = args['token']
+
     if token == None:
         return jsonify("no video sent to server")
 
-    print(token)
-    print(vector_dbs)
     del vector_dbs[token]
-    del session["token"]
     print(vector_dbs)
 
     return jsonify("success")
