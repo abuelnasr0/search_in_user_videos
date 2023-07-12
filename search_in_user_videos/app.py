@@ -34,9 +34,9 @@ def storevideo():
     embeddings = model.encode(captions_texts)
 
     #intialize VDB and store embeddings in it
-    vector_db = VDB( len(captions), 50)
-    vector_db.train(embeddings)
-    vector_db.insert(embeddings, captions)
+    num_entities = len(captions)
+    vector_db = VDB(num_entities)
+    vector_db.insert(num_entities, embeddings, captions)
 
     #generate universally unique id 
     token  = str(uuid.uuid4())

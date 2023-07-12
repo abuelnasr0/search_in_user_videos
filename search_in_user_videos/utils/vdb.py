@@ -1,36 +1,29 @@
-import faiss
+import hnswlib
 import numpy as np 
 
 class VDB():
-    def __init__(self, num_entities, cell_size, embedding_dim=768):
-        num_centroids = num_entities// cell_size 
-        quantizer = faiss.IndexFlatIP(embedding_dim)
-        self.index = faiss.IndexIVFFlat(quantizer, embedding_dim, num_centroids)
-        self.num_entities = num_entities
-        self.num_centroids = num_centroids
+    def __init__(self, num_elements, embedding_dim=768):
+        self.index = hnswlib.Index(space = 'ip', dim = embedding_dim)
+        self.index.init_index(max_elements = num_elements, ef_construction = 40, M = 8)
         self.captions = None
 
-    def train(self, embeddings):
-        #test if its trained
-        self.index.train(embeddings)
-
-    def insert(self, embeddings, captions):
+    def insert(self, num_elements, embeddings, captions):
         #test if num_entities == ntotal in the index
-        self.index.add(embeddings)
+        ids = np.arange(num_elements)
+        self.index.add_items(embeddings, ids)
         self.captions = captions
 
     def search(self, embeddings, top_k):
         if len(embeddings.shape) == 1 :
             embeddings = np.expand_dims(embeddings, 0)
-        distances, matches = self.index.search(embeddings, top_k)
-        final_results = []
-        for match in matches:
-            result = []
-            for index in match:
-                if index == -1:
-                    break
-                result.append(self.captions[index])
-            final_results.append(result)
+        labels, distances = self.index.knn_query(embeddings, k = top_k)
+        final_result = []
+        for l in labels:
+          one_result = []
+          for index in l :
+            one_result.append(self.captions[index])
+          final_result.append(one_result)
+        return final_result
 
-        return final_results
+
 
